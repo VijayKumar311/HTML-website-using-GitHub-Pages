@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Grocerly — Online Groceries</title>
+  <meta name="description" content="Grocerly — A clean, responsive grocery storefront inspired by major e-commerce layouts." />
+  <style>
+    :root{
+      --brand:#0f6fff;
+      --muted:#6b7280;
+      --card:#ffffff;
+      --bg:#f3f4f6;
+      --glass: rgba(255,255,255,0.7);
+      --max-width:1200px;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#111;font-size:16px;line-height:1.35}
+    .container{max-width:var(--max-width);margin:0 auto;padding:0 20px}
+
+    /* Header */
+    header{background:linear-gradient(180deg, #fff, rgba(255,255,255,0.95));box-shadow:0 2px 6px rgba(12,12,20,0.06);position:sticky;top:0;z-index:40}
+    .topbar{display:flex;align-items:center;gap:18px;padding:12px 0}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--brand);font-size:20px}
+    .logo .tag{font-weight:500;color:var(--muted);font-size:12px}
+    .search{flex:1;display:flex;align-items:center}
+    .search input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid #e6e8eb;background:#fff}
+    .search button{margin-left:8px;padding:10px 14px;border-radius:8px;border:none;background:var(--brand);color:#fff;cursor:pointer}
+    .icons{display:flex;gap:12px;align-items:center}
+    .icon-btn{background:transparent;border:none;cursor:pointer;padding:8px;border-radius:8px}
+
+    /* Hero */
+    .hero{background:linear-gradient(90deg, rgba(15,111,255,0.06), rgba(15,111,255,0.02));padding:24px 0;margin-bottom:18px}
+    .hero-grid{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:center}
+    .hero-card{background:var(--card);padding:20px;border-radius:12px;box-shadow:0 6px 18px rgba(12,12,20,0.04)}
+    .hero h1{margin:0 0 6px;font-size:26px}
+    .hero p{margin:0;color:var(--muted)}
+
+    /* Layout */
+    .main{display:grid;grid-template-columns:260px 1fr;gap:18px}
+    aside{background:var(--card);padding:16px;border-radius:10px;height:max-content}
+    .category{display:flex;flex-direction:column;gap:8px}
+    .category button{background:transparent;border:none;text-align:left;padding:8px;border-radius:8px;cursor:pointer}
+    .category button.active{background:rgba(15,111,255,0.08);color:var(--brand);font-weight:600}
+
+    /* Product grid */
+    .products{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+    .card{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 14px rgba(12,12,20,0.04);display:flex;flex-direction:column}
+    .img-wrap{height:140px;border-radius:10px;overflow:hidden;background:#f8fafc;display:flex;align-items:center;justify-content:center}
+    .img-wrap img{max-width:100%;max-height:100%;object-fit:contain}
+    .card h3{font-size:15px;margin:10px 0 6px}
+    .price-row{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+    .price{font-weight:700}
+    .add{padding:8px 10px;border-radius:8px;border:none;background:var(--brand);color:#fff;cursor:pointer}
+
+    /* Cart drawer */
+    .cart-drawer{position:fixed;right:20px;bottom:20px;background:var(--card);width:340px;border-radius:12px;box-shadow:0 10px 30px rgba(12,12,20,0.12);overflow:hidden;transform:translateY(40px);opacity:0;transition:all .28s;pointer-events:none}
+    .cart-drawer.open{transform:translateY(0);opacity:1;pointer-events:auto}
+    .cart-header{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #eef2f6}
+    .cart-list{max-height:320px;overflow:auto;padding:10px}
+    .cart-item{display:flex;gap:12px;padding:8px 0;border-bottom:1px dashed #f1f3f5}
+    .cart-item img{width:56px;height:56px;object-fit:cover;border-radius:6px}
+    .cart-footer{padding:12px;border-top:1px solid #eef2f6}
+    .checkout{width:100%;padding:12px;border-radius:8px;border:none;background:var(--brand);color:#fff;font-weight:700}
+
+    /* Footer */
+    footer{margin-top:26px;padding:26px 0;color:var(--muted);font-size:14px}
+
+    /* Responsive */
+    @media (max-width:900px){
+      .hero-grid{grid-template-columns:1fr}
+      .main{grid-template-columns:1fr}
+      aside{order:2}
+      header{position:relative}
+      .cart-drawer{right:12px;left:12px;width:auto}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container topbar">
+      <div class="logo" aria-label="Grocerly logo">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect x="2" y="3" width="20" height="14" rx="2" fill="var(--brand)"/>
+          <circle cx="8" cy="9" r="2" fill="#fff"/>
+          <rect x="6" y="13" width="10" height="6" rx="1" fill="#fff"/>
+        </svg>
+        Grocerly <span class="tag">Everyday essentials</span>
+      </div>
+
+      <div class="search" role="search">
+        <input id="searchInput" type="search" placeholder="Search for fruits, vegetables, snacks, dairy..." aria-label="Search products" />
+        <button id="searchBtn">Search</button>
+      </div>
+
+      <div class="icons">
+        <button class="icon-btn" id="accountBtn" title="Account">Account</button>
+        <button class="icon-btn" id="ordersBtn" title="Orders">Orders</button>
+        <button class="icon-btn" id="cartBtn" title="Cart">Cart (<span id="cartCount">0</span>)</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-grid">
+        <div class="hero-card">
+          <h1>Daily groceries delivered fast</h1>
+          <p>Fresh fruits, vegetables, dairy, bakery and pantry staples — handpicked and delivered to your door.</p>
+          <div style="margin-top:12px;display:flex;gap:10px">
+            <button onclick="filterCategory('all')" class="add">Shop All</button>
+            <button onclick="filterCategory('fresh')" style="background:#fff;border:1px solid #e6e8eb;color:var(--brand);padding:8px 12px;border-radius:8px">Fresh Picks</button>
+          </div>
+        </div>
+        <aside class="hero-card" style="display:flex;flex-direction:column;gap:10px">
+          <strong>Today's deals</strong>
+          <div style="display:flex;gap:10px;align-items:center">
+            <img src="https://images.unsplash.com/photo-1585238342028-2b8a5aa1c3f8?q=80&w=300&auto=format&fit=crop&crop=faces" alt="deal" style="width:72px;height:72px;border-radius:8px;object-fit:cover">
+            <div>
+              <div style="font-weight:700">Premium Bananas — 1 kg</div>
+              <div style="color:var(--muted)">Now ₹59 <span style="color:green;font-weight:700">20% off</span></div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:var(--muted)">Free delivery on orders above ₹499 | Schedule deliveries</div>
+        </aside>
+      </div>
+    </section>
+
+    <div class="main">
+      <aside aria-label="Categories">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <strong>Shop by category</strong>
+          <button onclick="clearFilters()" style="background:transparent;border:none;color:var(--brand);cursor:pointer">Clear</button>
+        </div>
+        <div class="category">
+          <button class="cat-btn active" data-cat="all">All</button>
+          <button class="cat-btn" data-cat="fresh">Fresh Produce</button>
+          <button class="cat-btn" data-cat="dairy">Dairy & Eggs</button>
+          <button class="cat-btn" data-cat="bakery">Bakery</button>
+          <button class="cat-btn" data-cat="pantry">Pantry Staples</button>
+          <button class="cat-btn" data-cat="snacks">Snacks & Beverages</button>
+          <button class="cat-btn" data-cat="household">Household</button>
+        </div>
+      </aside>
+
+      <section>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div><strong>Recommended for you</strong> <span style="color:var(--muted);font-size:13px">(120 items)</span></div>
+          <div style="color:var(--muted);font-size:14px">Sort: <select id="sortSelect"><option value="popular">Popularity</option><option value="price_asc">Price: Low→High</option><option value="price_desc">Price: High→Low</option></select></div>
+        </div>
+
+        <div id="products" class="products" aria-live="polite">
+          <!-- Product cards are inserted by JS -->
+        </div>
+
+      </section>
+    </div>
+
+    <!-- cart drawer -->
+    <div id="cartDrawer" class="cart-drawer" role="region" aria-label="Shopping cart">
+      <div class="cart-header">
+        <strong>Cart</strong>
+        <button onclick="toggleCart(false)" style="background:none;border:none;cursor:pointer">Close</button>
+      </div>
+      <div id="cartList" class="cart-list">
+        <div style="color:var(--muted);padding:12px">Your cart is empty.</div>
+      </div>
+      <div class="cart-footer">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="color:var(--muted)">Subtotal</div><div id="cartSubtotal">₹0</div></div>
+        <button class="checkout" onclick="checkout()">Proceed to Checkout</button>
+      </div>
+    </div>
+
+    <footer class="container">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap">
+        <div>
+          <strong>Grocerly</strong>
+          <div style="color:var(--muted);margin-top:8px">Delivering fresh groceries across your city. Secure payments. Easy returns.</div>
+        </div>
+        <div style="color:var(--muted);font-size:13px">© Grocerly — 2025</div>
+      </div>
+    </footer>
+  </main>
+
+  <script>
+    // Sample product data (replace with real API data in production)
+    const PRODUCTS = [
+      {id:1,name:'Bananas (1 kg)',price:59,category:'fresh',img:'https://images.unsplash.com/photo-1574226516831-e1dff420e8f8?q=80&w=800&auto=format&fit=crop&crop=faces'},
+      {id:2,name:'Organic Milk (1 L)',price:69,category:'dairy',img:'https://images.unsplash.com/photo-1571997478776-8b59d7b8a1b6?q=80&w=800&auto=format&fit=crop&crop=faces'},
+      {id:3,name:'Brown Bread',price:45,category:'bakery',img:'https://images.unsplash.com/photo-1604908176981-37e7f5f1d9f0?q=80&w=800&auto=format&fit=crop&crop=faces'},
+      {id:4,name:'Whole Wheat Flour (5 kg)',price:249,category:'pantry',img:'https://images.unsplash.com/photo-1603026388389-e9ea0b6fb0c1?q=80&w=800&auto=format&fit=crop&crop=faces'},
+      {id:5,name:'Potatoes (1 kg)',price:39,category:'fresh',img:'https://images.unsplash.com/photo-1582515073490-3998132a0f50?q=80&w=800&auto=format&fit=crop&crop=faces'},
+      {id:6,name:'Salt (1 kg)',price:25,category:'pantry',img:'https://images.unsplash.com/photo-1584523606561-8b4f0b8f3ac2?q=80&w=800&auto=format&fit=crop&crop=faces'},
+      {id:7,name:'Potato Chips (Bag)',price:99,category:'snacks',img:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop&crop=faces'},
+      {id:8,name:'Eggs (6 pcs)',price:60,category:'dairy',img:'https://images.unsplash.com/photo-1600172453310-3ca08f5d96f6?q=80&w=800&auto=format&fit=crop&crop=faces'},
+      {id:9,name:'Dishwash Liquid (500 ml)',price:129,category:'household',img:'https://images.unsplash.com/photo-1582719478161-9b5c6fb0afc9?q=80&w=800&auto=format&fit=crop&crop=faces'}
+    ];
+
+    // State
+    let state = {products:PRODUCTS,cart:[]};
+
+    // Utilities
+    const formatINR = v => '₹' + v.toFixed(0);
+
+    function renderProducts(list){
+      const container = document.getElementById('products');
+      container.innerHTML = '';
+      if(list.length===0){ container.innerHTML = '<div style="color:var(--muted)">No products found.</div>'; return }
+      list.forEach(p=>{
+        const card = document.createElement('article'); card.className='card';
+        card.innerHTML = `
+          <div class="img-wrap"><img alt="${p.name}" src="${p.img}" /></div>
+          <h3>${p.name}</h3>
+          <div style="color:var(--muted);font-size:13px">${p.category.charAt(0).toUpperCase()+p.category.slice(1)}</div>
+          <div class="price-row"><div class="price">${formatINR(p.price)}</div><button class="add" data-id="${p.id}">Add</button></div>
+        `;
+        container.appendChild(card);
+      });
+
+      // attach add listeners
+      container.querySelectorAll('.add').forEach(btn=>btn.addEventListener('click',e=>{
+        const id = parseInt(e.currentTarget.dataset.id); addToCart(id);
+      }));
+    }
+
+    function addToCart(id){
+      const product = state.products.find(p=>p.id===id);
+      const existing = state.cart.find(i=>i.id===id);
+      if(existing) existing.qty++;
+      else state.cart.push({...product,qty:1});
+      updateCartUI();
+      toggleCart(true);
+    }
+
+    function updateCartUI(){
+      const cartList = document.getElementById('cartList');
+      const cartCount = document.getElementById('cartCount');
+      const subtotalEl = document.getElementById('cartSubtotal');
+      if(state.cart.length===0){ cartList.innerHTML = '<div style="color:var(--muted);padding:12px">Your cart is empty.</div>'; cartCount.textContent='0'; subtotalEl.textContent='₹0'; return }
+      cartList.innerHTML = '';
+      let subtotal=0; state.cart.forEach(item=>{
+        subtotal += item.price * item.qty;
+        const div = document.createElement('div'); div.className='cart-item';
+        div.innerHTML = `<img src='${item.img}' alt='${item.name}' /><div style="flex:1"><div style="font-weight:600">${item.name}</div><div style="color:var(--muted);font-size:13px">${formatINR(item.price)} × ${item.qty}</div></div><div style="display:flex;flex-direction:column;gap:6px"><button onclick="changeQty(${item.id},1)">+</button><button onclick="changeQty(${item.id},-1)">-</button></div>`;
+        cartList.appendChild(div);
+      });
+      cartCount.textContent = state.cart.reduce((s,i)=>s+i.qty,0);
+      subtotalEl.textContent = formatINR(subtotal);
+    }
+
+    function changeQty(id,delta){
+      const item = state.cart.find(i=>i.id===id); if(!item) return;
+      item.qty += delta; if(item.qty<=0){ state.cart = state.cart.filter(i=>i.id!==id); }
+      updateCartUI();
+    }
+
+    function toggleCart(force){
+      const drawer = document.getElementById('cartDrawer');
+      const open = drawer.classList.contains('open');
+      if(typeof force==='boolean'){
+        drawer.classList.toggle('open', force);
+      } else {
+        drawer.classList.toggle('open');
+      }
+    }
+
+    function checkout(){
+      if(state.cart.length===0){ alert('Your cart is empty'); return }
+      alert('This is a demo checkout flow. Implement a real payment gateway in production.');
+    }
+
+    function filterCategory(cat){
+      document.querySelectorAll('.cat-btn').forEach(b=>b.classList.toggle('active', b.dataset.cat===cat || (cat==='all' && b.dataset.cat==='all')));
+      let filtered = PRODUCTS.slice();
+      if(cat && cat!=='all') filtered = filtered.filter(p=>p.category===cat);
+      renderProducts(filtered);
+    }
+
+    function clearFilters(){ document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active')); document.querySelector('.cat-btn[data-cat="all"]').classList.add('active'); renderProducts(PRODUCTS); }
+
+    // Search and sort
+    document.getElementById('searchBtn').addEventListener('click', ()=>{
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      const res = PRODUCTS.filter(p=>p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+      renderProducts(res);
+    });
+
+    document.getElementById('sortSelect').addEventListener('change',(e)=>{
+      const val = e.target.value; let arr = [...document.querySelectorAll('#products .card')];
+      let data = [...state.products];
+      if(val==='price_asc') data.sort((a,b)=>a.price-b.price);
+      else if(val==='price_desc') data.sort((a,b)=>b.price-a.price);
+      else data = PRODUCTS;
+      renderProducts(data);
+    });
+
+    // Category click binding
+    document.querySelectorAll('.cat-btn').forEach(btn=>btn.addEventListener('click',e=>{
+      const cat = e.currentTarget.dataset.cat; document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active')); e.currentTarget.classList.add('active');
+      if(cat==='all') renderProducts(PRODUCTS); else renderProducts(PRODUCTS.filter(p=>p.category===cat));
+    }));
+
+    // cart button
+    document.getElementById('cartBtn').addEventListener('click', ()=> toggleCart());
+
+    // initial render
+    renderProducts(PRODUCTS);
+    updateCartUI();
+
+    // keyboard search (enter)
+    document.getElementById('searchInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') document.getElementById('searchBtn').click(); });
+  </script>
+</body>
+</html>
